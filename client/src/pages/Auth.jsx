@@ -18,7 +18,10 @@ export default function Auth() {
 
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center mx-auto'>
-        <div className="h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2" >
+        <div className="absolute mb-150 xl:ml-200">
+            <Button>Dark</Button>
+        </div>
+        <div className="h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2 " >
             <div className="mx-auto flex flex-col gap-10 items-center justify-center">
                 <div className="mx-auto flex items-center justify-center flex-col">
                     <div className="mx-auto flex items-center justify-center">
@@ -36,12 +39,12 @@ export default function Auth() {
                             <TabsTrigger className=' data-[state=active]:bg-gray-200 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='signup'>Signup</TabsTrigger>
                         </TabsList>
                         <TabsContent className='flex flex-col gap-4 mt-5' value='login'>
-                            <Input placeholder="abc@gmail.com" type="email" className="rounded-full p-6" value={email} onChange = {(e) => setEmail(e.target.value)} />
+                            <Input placeholder="Email" type="email" className="rounded-full p-6" value={email} onChange = {(e) => setEmail(e.target.value)} />
                             <Input placeholder="Password" type="password" className="rounded-full p-6" value={password} onChange = {(e) => setPassword(e.target.value)} />
                             <Button className="rounded-full p-5 mt-1" onClick = {handleLogin}>Login</Button>
                         </TabsContent>
                         <TabsContent className='flex flex-col gap-4 mt-6' value='signup'>
-                            <Input placeholder="abc@gmail.com" type="email" className="rounded-full p-5" value={email} onChange = {(e) => setEmail(e.target.value)} />
+                            <Input placeholder="Email" type="email" className="rounded-full p-5" value={email} onChange = {(e) => setEmail(e.target.value)} />
                             <Input placeholder="Password" type="password" className="rounded-full p-5" value={password} onChange = {(e) => setPassword(e.target.value)} />
                             <Input placeholder="Confirm Password" type="password" className="rounded-full p-5" value={confirmPassword} onChange = {(e) => setConfirmPassword(e.target.value)} />
                             <Button className="mt-2 p-5 rounded-full" onClick = {handleSignUp}>Signup</Button>
@@ -50,7 +53,7 @@ export default function Auth() {
                 </div>
             </div>
             <div className="hidden xl:flex justify-center items-center">
-                <img src="https://wallpaperaccess.com/full/3404308.jpg" alt="background image" className='h-[530px] w-[400px] rounded-2xl' />
+                <img src="https://wallpaperaccess.com/full/3404308.jpg" alt="background image" className='shadow-2xl h-[530px] w-[410px] rounded-2xl' />
             </div>
         </div>
     </div>
