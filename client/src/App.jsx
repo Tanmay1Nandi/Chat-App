@@ -1,10 +1,18 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import Auth from "./pages/Auth"
+import Chat from "./pages/Chat"
+import Profile from "./pages/Profile"
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button className="bg-gradient-to-br from-purple-500 to-blue-500 cursor-pointer">Click me</Button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<Auth />}/>
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<Navigate to="/auth" />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
