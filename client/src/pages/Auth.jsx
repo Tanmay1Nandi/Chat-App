@@ -3,8 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 import {Loader2} from "lucide-react"
 import OAuth from '../myComponents/OAuth';
+import { toggleTheme } from '../app/theme/themeSlice';
 
 export default function Auth() {
     const [email, setEmail] = useState("");
@@ -15,6 +17,9 @@ export default function Auth() {
     const [loading, setLoading] = useState(false);
     
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const {theme} = useSelector(state => state.theme);
 
     const handleLogin = async(e) =>{
         e.preventDefault();
@@ -90,29 +95,33 @@ export default function Auth() {
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center mx-auto'>
         <div className="absolute mb-150 xl:ml-200">
-            <Button className="cursor-pointer">Dark</Button>
+            <Button className="cursor-pointer rounded-full" pill onClick = {() => dispatch(toggleTheme())}>
+                {
+                    theme === "light" ? <div className="">Dark</div> : <div>Light</div>
+                }
+            </Button>
         </div>
-        <div className="h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2 " >
+        <div className="h-[80vh] dark:bg-gray-600 dark:border-black bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2 " >
             <div className="mx-auto flex flex-col gap-10 items-center justify-center">
                 <div className="mx-auto flex items-center justify-center flex-col">
                     <div className="mx-auto flex items-center justify-center">
-                        <h1 className='text-5xl font-bold lg:text-6xl'>
+                        <h1 className='text-5xl font-bold lg:text-6xl dark:text-black'>
                             Welcome
                         </h1>
                         <img className='h-[80px] mt-3' src='http://www.i2symbol.com/pictures/emojis/2/5/d/7/25d7afe627a6de5c89acfc91c7f1f3bf.png' alt='Victory emoji' />
                     </div>
-                    <div className="text-sm font-semibold whitespace-nowrap">Fill in the details to experience the most amazing chat app!</div>
+                    <div className="text-sm font-semibold whitespace-nowrap dark:text-black">Fill in the details to experience the most amazing chat app!</div>
                 </div>
                 <div className="flex items-center justify-center w-full">
                     <Tabs className='w-full'>
                         <TabsList className='bg-transparent flex rounded-none w-full'>
-                            <TabsTrigger className='data-[state=active]:bg-gray-200 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='login' onClick={() => {setErrorMessage(null)}}>Login</TabsTrigger>
-                            <TabsTrigger className=' data-[state=active]:bg-gray-200 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='signup' onClick={() => {setErrorMessage(null)}}>Signup</TabsTrigger>
+                            <TabsTrigger className='data-[state=active]:bg-gray-200 dark:bg-gray-700 data-[state=active]:dark:bg-gray-800 dark:text-gray-200 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='login' onClick={() => {setErrorMessage(null)}}>Login</TabsTrigger>
+                            <TabsTrigger className=' data-[state=active]:bg-gray-200 data-[state=active]:dark:bg-gray-800 dark:bg-gray-700 dark:text-gray-200  text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='signup' onClick={() => {setErrorMessage(null)}}>Signup</TabsTrigger>
                         </TabsList>
                         <TabsContent className='flex flex-col gap-4 mt-5' value='login'>
                             <Input placeholder="Email" type="email" className="rounded-full p-6" value={email} onChange = {(e) => setEmail(e.target.value)} />
                             <Input placeholder="Password" type="password" className="rounded-full p-6" value={password} onChange = {(e) => setPassword(e.target.value)} />
-                            <Button disabled={loading} className="rounded-full p-5 mt-1 cursor-pointer" onClick = {handleLogin}>
+                            <Button disabled={loading} className="rounded-full p-5 mt-1 cursor-pointer dark:bg-gray-800 dark:text-gray-200" onClick = {handleLogin}>
                                 {
                                     loading === true ? (<>
                                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
