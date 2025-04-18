@@ -17,6 +17,11 @@ connectToDb(process.env.MONGO)
 .then(() => console.log("Connected to database!"))
 .catch((error) => console.log(error));
 
+//Routes
+const userRouter = require("./routes/auth.route");
+app.use("/api/auth", userRouter);
+
+
 app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}!`);
 })
