@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {Loader2} from "lucide-react"
 import OAuth from '../myComponents/OAuth';
 import { toggleTheme } from '../app/theme/themeSlice';
+import { signInSuccess } from '../app/user/userSlice';
 
 export default function Auth() {
     const [email, setEmail] = useState("");
@@ -43,6 +44,7 @@ export default function Auth() {
             const data = await response.json();
             if(response.ok){
                 setLoading(false);
+                dispatch(signInSuccess(data));
                 navigate("/profile");
             }
             else{
@@ -94,8 +96,8 @@ export default function Auth() {
 
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center mx-auto'>
-        <div className="absolute mb-150 xl:ml-200">
-            <Button className="cursor-pointer rounded-full" pill onClick = {() => dispatch(toggleTheme())}>
+        <div className="absolute mb-150 xl:ml-200 ml-75">
+            <Button className="cursor-pointer rounded-full" onClick = {() => dispatch(toggleTheme())}>
                 {
                     theme === "light" ? <div className="">Dark</div> : <div>Light</div>
                 }
@@ -137,7 +139,7 @@ export default function Auth() {
                             <Input placeholder="Email" type="email" className="rounded-full p-5" value={email} onChange = {(e) => setEmail(e.target.value)} />
                             <Input placeholder="Password" type="password" className="rounded-full p-5" value={password} onChange = {(e) => setPassword(e.target.value)} />
                             <Input placeholder="Confirm Password" type="password" className="rounded-full p-5" value={confirmPassword} onChange = {(e) => setConfirmPassword(e.target.value)} />
-                            <Button disabled={loading} className="mt-2 p-5 rounded-full cursor-pointer" onClick = {handleSignUp}>
+                            <Button disabled={loading} className="mt-2 p-5 rounded-full cursor-pointer dark:bg-gray-800 dark:text-gray-200" onClick = {handleSignUp}>
                             {
                                     loading === true ? (<>
                                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

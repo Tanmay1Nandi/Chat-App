@@ -35,6 +35,6 @@ export default function OAuth() {
         }
   }
   return (
-    <Button onClick = {handleGoogleClick} className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-full"><span ><AiFillGoogleCircle /></span>Google</Button>
+    <Button onClick = {handleGoogleClick} className="dark:text-gray-200 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full"><span ><AiFillGoogleCircle /></span>Google</Button>
   )
 }

@@ -61,7 +61,7 @@ const handleLogin = async(req, res, next) => {
 }
 
 const handleGoogleLogin =async (req, res, next)=>{
-    const {name, email, googlePhotoUrl} = req.body;
+    const {email, googlePhotoUrl} = req.body;
     try {
         const user = await User.findOne({email});
         if(user){
