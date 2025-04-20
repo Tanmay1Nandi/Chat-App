@@ -102,21 +102,17 @@ const handleGoogleLogin =async (req, res, next)=>{
 }
 
 const handleUpload = (req, res, next)=>{
-    console.log("Hello 1")
     console.log(req.file.path);
     cloudinary.uploader.upload(req.file.path, (err, result) => {
         if(err){
-            console.log("hello 2")
             return next(err);
         }
-        console.log("Hello 3")
         res.status(200).json({
             success:true,
             message:"Uploaded",
             data: result,
         })
     });
-    console.log("Hello 4")
 }
 
 module.exports = {

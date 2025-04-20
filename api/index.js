@@ -20,8 +20,10 @@ connectToDb(process.env.MONGO)
 
 //Routes
 const userRouter = require("./routes/auth.route");
-app.use("/api/auth", userRouter);
+const userChangesRouter = require("./routes/user.route")
 
+app.use("/api/auth", userRouter);
+app.use("/api/user", userChangesRouter);
 
 app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}!`);
