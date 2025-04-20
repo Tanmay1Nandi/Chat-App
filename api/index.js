@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 8001;
 
 //middlewares
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(cookieParser());
 
 //connecting to database
