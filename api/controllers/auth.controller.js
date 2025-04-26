@@ -21,7 +21,7 @@ const handleSignup = async(req, res, next) => {
         })
 
         await newUser.save();
-        res.status(201).json("New user created");
+        res.status(201).json(newUser);
     } catch (error) {
         next(errorHandler(404, "User already exists"));
     }
@@ -102,7 +102,6 @@ const handleGoogleLogin =async (req, res, next)=>{
 }
 
 const handleUpload = (req, res, next)=>{
-    console.log(req.file.path);
     cloudinary.uploader.upload(req.file.path, (err, result) => {
         if(err){
             return next(err);
@@ -115,9 +114,29 @@ const handleUpload = (req, res, next)=>{
     });
 }
 
+const clickToVerifyEmail = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const validUser = await User.findOne({_id : userId});
+        if(!validUser) {
+            res.status(403).json("User not found.");
+        }
+        const updatedUser = await User.findByIdAndUpdate(req.params.userId,{
+            $set: {
+                isVerified: true,
+            },
+        },{new: true});
+        const {password, ...rest} = updatedUser._doc;
+        res.status(200).json("Successfully Verified.");
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     handleSignup,
     handleLogin,
     handleGoogleLogin,
-    handleUpload
+    handleUpload,
+    clickToVerifyEmail
 }

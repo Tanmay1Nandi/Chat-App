@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
     profileSetup:{
         type: Boolean,
         default: false,
+    },
+    isVerified:{
+        type: Boolean,
+        default: false,
+    },
+    OTP:{
+        type: Number,
+        default: null,
     }
 },{timestamps: true});
 

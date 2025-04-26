@@ -21,5 +21,5 @@ const handleUpdate = async(req, res, next) => {
 }
 
 module.exports = {
-    handleUpdate
+    handleUpdate,
 }

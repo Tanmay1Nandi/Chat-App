@@ -15,12 +15,16 @@ export default function Auth() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [otp, setOtp] = useState(false);
+    const [otpValue, setOtpValue] = useState(null);
     
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const {theme} = useSelector(state => state.theme);
+    const {currentUser} = useSelector(state => state.user);
 
     const handleLogin = async(e) =>{
         e.preventDefault();
@@ -44,7 +48,10 @@ export default function Auth() {
             const data = await response.json();
             if(response.ok){
                 setLoading(false);
-                dispatch(signInSuccess(data));
+                dispatch(signInSuccess(data));             
+                if(!currentUser.isVerified){
+                    return setErrorMessage("Verify your email to continue.")
+                }
                 navigate("/profile");
             }
             else{
@@ -85,8 +92,35 @@ export default function Auth() {
                 return setErrorMessage(data.message);
             }else{
                 setLoading(false);
-                setSuccessMessage("Signup successful please login now");
-                navigate("/auth");
+                
+                // try {
+                //     setLoading(true);
+                //     const response = await fetch(`/api/user/verifyEmail/${data._id}`);
+                //     if(response.ok){
+                //         setMessage("Link sent to your email please click to verify.");
+                //     }else{
+                //         setMessage("Cant verify email");
+                //     }
+                // } catch (error) {
+                //     console.log(error.message);
+                // }
+
+                try {
+                    setLoading(true);
+                    const response = await fetch (`/api/user/verifyEmail/${email}`);
+                    if(response.ok){
+                        setMessage("Please enter the OTP sent to your email.")
+                        setSuccessMessage(null);
+                        setOtp(true);
+                    }else{
+                        setMessage("Email verification failed.")
+                    }
+                } catch (error) {
+                    console.log(error.message);
+                }
+
+                // setSuccessMessage("Signup successful please login now");
+                // navigate("/auth");
             }
         } catch (error) {
             setLoading(false);
@@ -94,9 +128,53 @@ export default function Auth() {
         }
     }
 
+    const handleOtpSubmit = async () => {
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        try {
+            const response = await fetch("/api/user/verifyOTP", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    OTP: otpValue
+                })
+            })
+            if(response.ok){
+                setLoading(false);
+                setOtp(false);
+                setSuccessMessage("Email Verified please login to continue");
+                dispatch(signInSuccess(data));
+            }
+            else{
+                setErrorMessage("Incorrect OTP")
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    const handleResendOtp = async() => {
+        try {
+            setLoading(true);
+            const response = await fetch (`/api/user/verifyEmail/${email}`);
+            if(response.ok){
+                setMessage("OTP sent again, please enter the OTP.")
+                setSuccessMessage(null);
+                setOtp(true);
+            }else{
+                setMessage("Email verification failed.")
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center mx-auto'>
-        <div className="absolute mb-150 xl:ml-200 ml-75">
+        <div className="absolute mb-180 lg:mb-150 xl:ml-200 ml-75">
             <Button className="cursor-pointer rounded-full" onClick = {() => dispatch(toggleTheme())}>
                 {
                     theme === "light" ? <div className="">Dark</div> : <div>Light</div>
@@ -117,7 +195,11 @@ export default function Auth() {
                 <div className="flex items-center justify-center w-full">
                     <Tabs className='w-full'>
                         <TabsList className='bg-transparent flex rounded-none w-full'>
-                            <TabsTrigger className='data-[state=active]:bg-gray-200 dark:bg-gray-700 data-[state=active]:dark:bg-gray-800 bg-gray-100 dark:text-gray-200 mr-1 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='login' onClick={() => {setErrorMessage(null)}}>Login</TabsTrigger>
+                            <TabsTrigger className='data-[state=active]:bg-gray-200 dark:bg-gray-700 data-[state=active]:dark:bg-gray-800 bg-gray-100 dark:text-gray-200 mr-1 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='login' onClick={() => 
+                            {
+                                setErrorMessage(null)
+                            }
+                        }>Login</TabsTrigger>
                             <TabsTrigger className='bg-gray-100 data-[state=active]:bg-gray-200 data-[state=active]:dark:bg-gray-800 dark:bg-gray-700 dark:text-gray-200 ml-0.5 text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-2 transition-all duration-300' value='signup' onClick={() => {setErrorMessage(null)}}>Signup</TabsTrigger>
                         </TabsList>
                         <TabsContent className='flex flex-col gap-4 mt-5' value='login'>
@@ -153,10 +235,27 @@ export default function Auth() {
                     </Tabs>
                 </div>
                 {
+                    otp && <div className='flex flex-col gap-2 sm:flex-row'>
+                        <div className='flex flex-col sm:w-60 lg:w-65'>
+                            <h1 className='text-lg font-semibold'>Enter Your 6-digit OTP :</h1>
+                            <div className='flex flex-col gap-2'>
+                                <input onChange={(e) => setOtpValue(e.target.value)}  className=' p-0.5 border-1 border-red-400 dark:border-white' type="text" />
+                                <div className='flex'>
+                                    <button onClick={handleOtpSubmit} className='bg-green-500 flex-1 rounded-sm cursor-pointer border-2 border-green-700 text-white p-0.5'>Enter</button>
+                                    <button onClick={handleResendOtp} className='bg-blue-500 flex-1 rounded-sm text-white border-2 border-blue-700 ml-1 cursor-pointer'>Resend OTP</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                }
+                {
                     errorMessage && <div className="max-w-[350px] truncate text-red-500">{errorMessage}</div>
                 }
                 {
                     successMessage && <div className="max-w-[350px] truncate text-green-600">{successMessage}</div>
+                }
+                {
+                    message && <div className="max-w-[350px] truncate text-blue-600">{message}</div>
                 }
             </div>
             <div className="hidden xl:flex justify-center items-center">

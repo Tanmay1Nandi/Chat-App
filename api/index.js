@@ -12,6 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
+// const verifyEmail = require("./utils/nodeMailer");
+// verifyEmail();
+
 //connecting to database
 const connectToDb = require("./connection");
 connectToDb(process.env.MONGO)
