@@ -8,7 +8,7 @@ export default function Chat() {
     <div className='flex h-[100vh] text-white overflow-hidden'>
       <ContactsContainer />
       {/* <EmptyChatContainer /> */}
-      <ChatContainer />
+      {/* <ChatContainer /> */}
     </div>
   )
 }
