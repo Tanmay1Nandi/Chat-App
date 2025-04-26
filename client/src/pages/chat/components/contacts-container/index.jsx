@@ -1,5 +1,6 @@
 import React from 'react'
 import {FcPositiveDynamic} from "react-icons/fc"
+import ProfileInfo from './components/profile-info'
 
 export default function ContactsContainer() {
   return (
@@ -17,6 +18,7 @@ export default function ContactsContainer() {
           <Title text="Channels" />
         </div>
       </div>
+      <ProfileInfo />
     </div>
   )
 }

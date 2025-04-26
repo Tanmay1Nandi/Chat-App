@@ -108,7 +108,7 @@ export default function Profile() {
       <div className="bg-pink-200 dark:bg-gray-900 h-[100vh] flex justify-center items-center flex-col gap-10">
         <div className="flex flex-col dark:bg-gray-900 bg-pink-200 gap-10 w-[80vw]  dark:border-gray-900  rounded-2xl p-5 sm:w-max">
           <div className="flex flex-row justify-between">
-            <IoArrowBack className='text-4xl lg:text-6xl text-gray-600 dark:text-white/90  cursor-pointer' onClick={() => navigate("/auth")} />
+            <IoArrowBack className='text-4xl lg:text-6xl text-gray-600 dark:text-white/90  cursor-pointer' onClick={() => navigate("/chat")} />
             <div className="">
               <Button className="cursor-pointer rounded-full" onClick = {() => dispatch(toggleTheme())}>
                   {
