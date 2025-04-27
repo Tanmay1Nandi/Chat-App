@@ -15,6 +15,8 @@ import {
     DialogTitle,
   } from "@/components/ui/dialog"
   
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 import { FaPlus } from 'react-icons/fa'
 import { Input } from '../../../../../../components/ui/input';
 
@@ -24,7 +26,24 @@ export default function NewDm() {
     const [searchedContacts, setSearchedContacts] = useState([]);
     
     const searchContacts = async(searchTerm) => {
-
+        try {
+            if(searchTerm.length > 0){
+                const response = await fetch("/api/contacts/search",{
+                    method: "POST",
+                    headers:{"Content-type" : "application/json"},
+                    body: JSON.stringify({searchTerm}),
+                });
+                const data = await response.json();
+                if (response.ok){
+                    const contacts = data.contacts;
+                    setSearchedContacts(contacts);
+                }
+            }else{
+                setSearchedContacts([]);
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 
     return (
@@ -49,6 +68,30 @@ export default function NewDm() {
                     <Input placeholder="Search Contacts" className="rounded-lg p-6 bg-[#2c2e3b]"
                     onChange={(e)=>searchContacts(e.target.value)}/>
                 </div>
+                <ScrollArea className="h-[250px]" >
+                    <div className="flex flex-col gap-5">
+                        {
+                            searchedContacts.map(contact => <div key={contact._id} className='flex gap-3 items-center cursor-pointer'>
+                                <div className="flex gap-2 items-center justify-center">
+                                    <div className="">
+                                    <div className="h-12 w-12 relative border-1 border-purple-500 dark:border-gray-500 rounded-full flex items-center justify-center">
+                                        <img className='w-full h-full border-0.5 dark:border-gray-500 border-purple-500 rounded-full object-cover' src={contact.profilePicture}/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span>
+                                        {
+                                        contact.firstName && contact.lastName ? `${contact.firstName} ${contact.lastName}` : contact.email
+                                    }
+                                    </span>
+                                    <span className='text-xs'>{contact.email}</span>
+                                </div>
+                            </div>)
+                        }
+                    </div>
+                </ScrollArea>
+
                 {
                     searchedContacts.length === 0 && <div className="">
                         <div className='flex-1 md:bg-[#1c1d25] md:flex flex-col justify-center items-center duration-1000 transition-all'>
