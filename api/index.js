@@ -24,16 +24,18 @@ connectToDb(process.env.MONGO)
 //Routes
 const userRouter = require("./routes/auth.route");
 const userChangesRouter = require("./routes/user.route")
-const contactsRouter = require("./routes/contact.route")
+const contactsRouter = require("./routes/contact.route");
+const { setUpSocket } = require("./socket");
 
 app.use("/api/auth", userRouter);
 app.use("/api/user", userChangesRouter);
 app.use("/api/contacts", contactsRouter);
 
-app.listen(PORT, ()=>{
+const server = app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}!`);
 })
 
+setUpSocket(server);
 
 //Error Handler
 app.use((err, req, res, next) => {
