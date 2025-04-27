@@ -19,12 +19,16 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { FaPlus } from 'react-icons/fa'
 import { Input } from '../../../../../../components/ui/input';
-
+import { useDispatch, useSelector } from 'react-redux'
+import { chatClose, chatOpen } from '../../../../../../app/chat/chatSlice'
 
 export default function NewDm() {
     const [openNewContactModel, setOpenNewContactModel] = useState(false);
     const [searchedContacts, setSearchedContacts] = useState([]);
     
+    const dispatch = useDispatch();
+    // const {selectedChatType} = useSelector(state => state.chat);
+
     const searchContacts = async(searchTerm) => {
         try {
             if(searchTerm.length > 0){
@@ -44,6 +48,16 @@ export default function NewDm() {
         } catch (error) {
             console.log(error.message)
         }
+    }
+
+    const selectNewContact = (contact) => {
+        dispatch(chatOpen({
+            type: "contact",
+            data: contact,
+            messages: [],
+        }));
+        setOpenNewContactModel(false);
+        setSearchedContacts([]);
     }
 
     return (
@@ -71,7 +85,7 @@ export default function NewDm() {
                 <ScrollArea className="h-[250px]" >
                     <div className="flex flex-col gap-5">
                         {
-                            searchedContacts.map(contact => <div key={contact._id} className='flex gap-3 items-center cursor-pointer'>
+                            searchedContacts.map(contact => <div key={contact._id} className='flex gap-3 items-center cursor-pointer' onClick={()=> selectNewContact(contact)}>
                                 <div className="flex gap-2 items-center justify-center">
                                     <div className="">
                                     <div className="h-12 w-12 relative border-1 border-purple-500 dark:border-gray-500 rounded-full flex items-center justify-center">
@@ -94,9 +108,9 @@ export default function NewDm() {
 
                 {
                     searchedContacts.length === 0 && <div className="">
-                        <div className='flex-1 md:bg-[#1c1d25] md:flex flex-col justify-center items-center duration-1000 transition-all'>
+                        <div className='flex-1 flex-col justify-center items-center duration-1000 transition-all sm:mb-30'>
                         {/* <div className="flex justify-center text-4xl mt-5 text-pink-500 font-bold">Hello</div> */}
-                        <div className="text-opacity-80 text-white flex flex-col gap-5 my-10 items-center transition-all duration-300 text-center lg:text-2xl text-3xl">
+                        <div className="text-opacity-80 text-white flex flex-col gap-5 mb-30 items-center transition-all duration-300 text-center text-3xl">
                             <h3 className='poppins-medium'>
                             Hi <span className='text-purple-500'>!</span> Search New <span className='text-purple-500'>Contact.</span>
                             </h3>
