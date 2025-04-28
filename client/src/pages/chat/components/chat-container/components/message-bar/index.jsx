@@ -3,9 +3,15 @@ import { GrAttachment } from "react-icons/gr"
 import { RiEmojiStickerLine } from "react-icons/ri"
 import { IoMdSend } from "react-icons/io"
 import EmojiPicker from "emoji-picker-react"
+import { useSelector } from 'react-redux'
+import { useSocket } from '../../../../../../context/SocketContext'
 
 export default function MessageBar() {
   const [message, setMessage] = useState("");
+
+  const { socket, isSocketConnected } = useSocket();
+  const {selectedChatType, selectedChatData} = useSelector(state => state.chat);
+  const {currentUser} = useSelector(state => state.user);
 
   const emojiRef = useRef();
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -27,8 +33,23 @@ export default function MessageBar() {
   }
 
   const handleSendMessage = async () => {
-
+    if(!message.trim()) return;
+    console.log(socket)
+    if(!socket || !isSocketConnected){
+      console.log("Socket not ready!");
+      return;
+    }
+    if(selectedChatType === "contact"){
+      socket.emit("sendMessage", {
+        sender: currentUser._id,
+        content: message,
+        recipient: selectedChatData._id,
+        messageType: "text",
+        fileUrl: null,
+      })
+    }
   }
+
   return (
     <div className='h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-5'>
       <div className="flex-1 flex bg-[#2a2b33] rounded-md gap-5 pr-5 items-center">
