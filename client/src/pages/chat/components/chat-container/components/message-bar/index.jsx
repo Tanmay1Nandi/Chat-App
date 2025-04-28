@@ -3,11 +3,14 @@ import { GrAttachment } from "react-icons/gr"
 import { RiEmojiStickerLine } from "react-icons/ri"
 import { IoMdSend } from "react-icons/io"
 import EmojiPicker from "emoji-picker-react"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useSocket } from '../../../../../../context/SocketContext'
+import { addSingleMessage, removeSingleMessage } from '../../../../../../app/singleMessage/singleMessageSlice'
 
 export default function MessageBar() {
   const [message, setMessage] = useState("");
+
+  const dispatch = useDispatch();
 
   const { socket, isSocketConnected } = useSocket();
   const {selectedChatType, selectedChatData} = useSelector(state => state.chat);
@@ -34,7 +37,6 @@ export default function MessageBar() {
 
   const handleSendMessage = async () => {
     if(!message.trim()) return;
-    console.log(socket)
     if(!socket || !isSocketConnected){
       console.log("Socket not ready!");
       return;
@@ -48,6 +50,7 @@ export default function MessageBar() {
         fileUrl: null,
       })
     }
+    setMessage("");
   }
 
   return (

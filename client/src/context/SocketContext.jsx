@@ -29,12 +29,16 @@ export const SocketProvider = ({children}) => {
                 setIsSocketConnected(true);
             })
 
-            console.log(socket.current)
             const handleReceiveMessage = (message) => {
                 
+                const cleanedMessage = {
+                    ...message,
+                    sender: typeof message.sender === 'object' ? message.sender._id : message.sender,
+                    recipient: typeof message.recipient === 'object' ? message.recipient._id : message.recipient,
+                  };
                 if(selectedChatType !== null && selectedChatData._id === message.sender._id || selectedChatData._id === message.recipient._id){
-                    console.log(message)
-                    dispatch(addMessage(message));
+                    
+                    dispatch(addMessage(cleanedMessage));
                 }
             }
 

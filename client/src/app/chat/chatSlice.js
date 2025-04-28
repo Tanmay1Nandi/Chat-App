@@ -21,24 +21,48 @@ const chatSlice = createSlice({
             state.selectedChatData = null;
             state.selectedChatMessages = [];
         },
-        addMessage: (state, action) => {
-            const message = action.payload;
+        // addMessage: (state, action) => {
+        //     const message = action.payload;
 
-            state.selectedChatMessages.push({
+        //     // console.log("receipent",message.recepient);
+        //     // console.log(message.sender._id);
+        //     console.log("message",message)
+        //     state.selectedChatMessages.push({
+        //         ...message,
+        //         recipient:
+        //             state.selectedChatType === "channel"
+        //                 ? message.recipient
+        //                 : message.recipient,
+        //         sender:
+        //             state.selectedChatType === "channel"
+        //                 ? message.sender
+        //                 : message.sender
+        //     });
+        // }
+        refreshMessage: (state) => {
+            state.selectedChatMessages = [];
+        },
+        addMessage: (state, action) => {
+            const payload = action.payload;
+            const messages = Array.isArray(payload) ? payload : [payload];
+          
+            messages.forEach((message) => {
+              state.selectedChatMessages.push({
                 ...message,
-                receipent:
-                    state.selectedChatType === "channel"
-                        ? message.recepient
-                        : message.recipient._id,
+                recipient:
+                  state.selectedChatType === "channel"
+                    ? message.recipient
+                    : message.recipient,
                 sender:
-                    state.selectedChatType === "channel"
-                        ? message.sender
-                        : message.sender._id,
+                  state.selectedChatType === "channel"
+                    ? message.sender
+                    : message.sender,
+              });
             });
-        }
+          }        
     }
 })
 
-export const { chatClose, chatOpen, addMessage } = chatSlice.actions;
+export const { chatClose, chatOpen, addMessage, refreshMessage } = chatSlice.actions;
 
 export default chatSlice.reducer;
