@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    singleMessage: null,
+    oneMessage: null,
 }
 
 const singleMessageSlice = createSlice({
@@ -9,10 +9,10 @@ const singleMessageSlice = createSlice({
     initialState,
     reducers: {
         addSingleMessage: (state, action) => {
-            state.singleMessage = action.payload;
+            state.oneMessage = action.payload;
         },
         removeSingleMessage: (state) => {
-            state.singleMessage = null;
+            state.oneMessage = null;
         }
     }
 });

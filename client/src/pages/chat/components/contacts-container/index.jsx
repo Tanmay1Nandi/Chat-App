@@ -1,9 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {FcPositiveDynamic} from "react-icons/fc"
 import ProfileInfo from './components/profile-info'
 import NewDm from './components/new-dm'
 
 export default function ContactsContainer() {
+
+  useEffect(() => {
+    const getContacts = async() => {
+      const response = await fetch("/api/contacts/get-contacts-for-dm");
+      if(response.ok){
+        const data = await response.json();
+        console.log(data.contacts);
+      }
+    }
+    getContacts();
+  }, [])
+
   return (
     <div className='relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#1b1c24] border-r-2 border-[#2f303b] w-full'>
       <div className="pt-3 mb-9">

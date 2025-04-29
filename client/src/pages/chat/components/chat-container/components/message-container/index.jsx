@@ -7,8 +7,10 @@ import moment from "moment"
 export default function MessageContainer() {
   const scrollRef = useRef();
   const {selectedChatType, selectedChatData, selectedChatMessages} = useSelector(state => state.chat);
-  // const {singleMessage} = useSelector(state => state.singleMessage)
+  const {oneMessage} = useSelector(state => state.singleMessage)
   const dispatch = useDispatch();
+
+
   // const {currentUser} = useSelector(state => state.user);
 
 
@@ -18,7 +20,6 @@ export default function MessageContainer() {
     } 
     const getMessages = async() => {
       dispatch(refreshMessage());
-      
       try {
         const response = await fetch(`/api/messages/get-messages`,{
           method: "POST",
@@ -29,7 +30,6 @@ export default function MessageContainer() {
         if(response.ok){
           // setOneMessage(null);
           const data = await response.json();
-          console.log(data)
           if(data.messages){
             data.messages.forEach((msg) => {
               dispatch(addMessage(msg));

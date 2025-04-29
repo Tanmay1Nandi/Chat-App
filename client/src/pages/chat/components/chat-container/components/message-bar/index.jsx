@@ -36,21 +36,26 @@ export default function MessageBar() {
   }
 
   const handleSendMessage = async () => {
-    if(!message.trim()) return;
-    if(!socket || !isSocketConnected){
-      console.log("Socket not ready!");
-      return;
+    try {
+      if(!message.trim()) return;
+      if(!socket || !isSocketConnected){
+        console.log("Socket not ready!");
+        return;
+      }
+      if(selectedChatType === "contact"){
+        socket.emit("sendMessage", {
+          sender: currentUser._id,
+          content: message,
+          recipient: selectedChatData._id,
+          messageType: "text",
+          fileUrl: null,
+        })
+      }
+      setMessage("");
+      
+    } catch (error) {
+      console.log(error.message)
     }
-    if(selectedChatType === "contact"){
-      socket.emit("sendMessage", {
-        sender: currentUser._id,
-        content: message,
-        recipient: selectedChatData._id,
-        messageType: "text",
-        fileUrl: null,
-      })
-    }
-    setMessage("");
   }
 
   return (
