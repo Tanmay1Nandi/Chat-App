@@ -1,4 +1,6 @@
 const Message = require("../models/messages.model");
+const {mkdirSync, renameSync} = require("fs");
+const errorHandler = require("../utils/error");
 
 const getMessages = async(req, res, next) => {
     try {
@@ -22,6 +24,26 @@ const getMessages = async(req, res, next) => {
     }
 }
 
+const uploadFile = async(req, res, next) => {
+    try {
+        if(!req.file){
+            return next(errorHandler(400, "File is required"));
+        }
+        const date = Date.now();
+        let fileDir = `uploads/files/${date}`;
+        let fileName = `${fileDir}/${req.file.originalname}`;
+
+        mkdirSync(fileDir, {recursive: true});
+
+        renameSync(req.file.path, fileName)
+
+        return res.status(200).json({ filePath: fileName});
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
+    uploadFile,
     getMessages
 }

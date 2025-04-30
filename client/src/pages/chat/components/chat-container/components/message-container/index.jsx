@@ -1,8 +1,10 @@
 import React, { useDebugValue, useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { addMessage, refreshMessage } from '../../../../../../app/chat/chatSlice';
+import { MdFolderZip} from "react-icons/md"
 import { removeSingleMessage } from '../../../../../../app/singleMessage/singleMessageSlice';
 import moment from "moment"
+import { IoMdArrowDown } from 'react-icons/io';
 
 export default function MessageContainer() {
   const scrollRef = useRef();
@@ -13,6 +15,10 @@ export default function MessageContainer() {
 
   // const {currentUser} = useSelector(state => state.user);
 
+  const checkIfImage = (filePath) => {
+    const imageRegex = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i;
+    return imageRegex.test(filePath);
+  }
 
   useEffect(() => {
     if (!selectedChatData?._id || selectedChatType !== "contact"){
@@ -45,11 +51,34 @@ export default function MessageContainer() {
     
   }, [selectedChatData, selectedChatType, dispatch])
 
+
+  const downloadFile = (file) => {
+
+  };
   const renderDmMessages = (message) =>
   <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
     {
       message.messageType === "text" && <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
       {message.content}
+    </div>
+    }
+    {
+      message.messageType === "file" && 
+      <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
+        {checkIfImage(message.fileUrl) ? 
+        <div className='cursor-pointer'>
+          <img src={`http://localhost:8000/${message.fileUrl}`} height={300} width={300}/>
+        </div> :
+        <div className="flex items-center justify-center gap-4">
+          <span className='text-white/60 text-3xl bg-black/20 rounded-full p-3'>
+            <MdFolderZip />
+          </span>
+          <span>{message.fileUrl.split("/").pop()}</span>
+          <span className='bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300' onClick={() => downloadFile(message.fileUrl)}>
+            <IoMdArrowDown />
+          </span>
+        </div>
+        }
     </div>
     }
     <div className="text-xs text-gray-600">

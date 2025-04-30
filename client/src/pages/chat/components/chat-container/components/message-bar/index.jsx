@@ -19,6 +19,9 @@ export default function MessageBar() {
   const emojiRef = useRef();
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
+
+  const fileInputRef = useRef();
+
   useEffect(() => {
     function handleClickOutside(event){
       if(emojiRef.current && !emojiRef.current.contains(event.target)){
@@ -58,13 +61,51 @@ export default function MessageBar() {
     }
   }
 
+  const handleAttachmentClick = () => {
+    if(fileInputRef.current){
+      fileInputRef.current.click();
+    }
+  }
+
+  const handleAttachmentChange = async(e) => {
+    try {
+      const file = e.target.files[0];
+      if(file) {
+        const formData = new FormData();
+        formData.append("file",file);
+        const response = await fetch("/api/messages/upload-file", {
+          method: "POST",
+          body: formData,
+        })
+
+        if(response.ok){
+          const data = await response.json();
+          if(data){
+            if(selectedChatType === "contact"){
+              socket.emit("sendMessage", {
+                sender: currentUser._id,
+                content: undefined,
+                recipient: selectedChatData._id,
+                messageType: "file",
+                fileUrl: data.filePath,
+              })
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className='h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-5'>
       <div className="flex-1 flex bg-[#2a2b33] rounded-md gap-5 pr-5 items-center">
         <input type='text' className='flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none' placeholder='Enter Message' value={message} onChange={(e) => setMessage(e.target.value)}/>
-        <button className='text-neutral-500 focus:border-none focus:text-white focus:outline-none duration-300 transition-all'>
+        <button className='text-neutral-500 focus:border-none focus:text-white focus:outline-none duration-300 transition-all' onClick={handleAttachmentClick}>
           <GrAttachment className='text-2xl' />
         </button>
+        <input type='file' className='hidden' ref={fileInputRef} onChange={handleAttachmentChange} />
         <div className="relative">
         <button className='text-neutral-500 focus:border-none focus:text-white focus:outline-none duration-300 transition-all' onClick={() => {
           setEmojiPickerOpen(true)

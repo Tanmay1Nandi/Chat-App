@@ -31,7 +31,7 @@ export default function ContactsContainer() {
           <Title text="Direct Messages" />
           <NewDm />
         </div>
-        <div className="max-h-[30vh] pl-0 ml-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="max-h-[31vh] pl-0 ml-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {/* {console.log(directMessagesContacts)} */}
           {directMessagesContacts && <ContactList contacts={directMessagesContacts} />}
           

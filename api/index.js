@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -27,6 +28,9 @@ const userChangesRouter = require("./routes/user.route")
 const contactsRouter = require("./routes/contact.route");
 const messageRouter = require("./routes/message.route")
 const { setUpSocket } = require("./socket");
+
+app.use("/uploads/files", express.static("uploads/files"));
+
 
 app.use("/api/auth", userRouter);
 app.use("/api/user", userChangesRouter);
