@@ -2,15 +2,20 @@ import React, { useEffect } from 'react'
 import {FcPositiveDynamic} from "react-icons/fc"
 import ProfileInfo from './components/profile-info'
 import NewDm from './components/new-dm'
+import { useDispatch, useSelector } from 'react-redux'
+import { setDirectMessagesContacts } from '../../../../app/chat/chatSlice'
+import ContactList from '../../../../myComponents/ContactList'
 
 export default function ContactsContainer() {
 
+  const dispatch = useDispatch();
+  const {directMessagesContacts} = useSelector(state => state.chat)
   useEffect(() => {
     const getContacts = async() => {
       const response = await fetch("/api/contacts/get-contacts-for-dm");
       if(response.ok){
         const data = await response.json();
-        console.log(data.contacts);
+        dispatch(setDirectMessagesContacts(data.contacts));
       }
     }
     getContacts();
@@ -25,6 +30,11 @@ export default function ContactsContainer() {
         <div className="flex items-center justify-between pr-10">
           <Title text="Direct Messages" />
           <NewDm />
+        </div>
+        <div className="max-h-[30vh] pl-0 ml-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+          {/* {console.log(directMessagesContacts)} */}
+          {directMessagesContacts && <ContactList contacts={directMessagesContacts} />}
+          
         </div>
       </div>
       <div className="my-5">

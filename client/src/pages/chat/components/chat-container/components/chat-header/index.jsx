@@ -13,7 +13,7 @@ export default function ChatHeader() {
         <div className="flex gap-2 items-center justify-center">
           <div className="">
             <div className="h-12 w-12 relative border-1 border-purple-500 dark:border-gray-500 rounded-full flex items-center justify-center">
-              <img className='w-full h-full border-0.5 dark:border-gray-500 border-purple-500 rounded-full object-cover' src={selectedChatData.profilePicture}/>
+              <img className='w-full h-full border-0.5 dark:border-gray-500 border-purple-500 rounded-full object-cover' src={selectedChatData.image}/>
             </div>
           </div>
           {selectedChatType === "contact" && selectedChatData.firstName ? `${selectedChatData.firstName}  ${selectedChatData.lastName}` : selectedChatData.email 
