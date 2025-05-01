@@ -1,6 +1,6 @@
 const express = require("express");
 const verifyUser = require("../utils/verification");
-const { getMessages, uploadFile } = require("../controllers/messages.controller");
+const { getMessages, uploadFile, deleteMessages } = require("../controllers/messages.controller");
 
 // const multer = require("multer");
 // const upload = multer({dest: "uploads/files"});
@@ -22,5 +22,6 @@ router.post("/get-messages", verifyUser,(err, req, res, next) => {
     next();
   }, getMessages);
 router.post("/upload-file", verifyUser, upload.single("file"), uploadFile);
+router.delete("/delete-message", verifyUser, deleteMessages);
 
 module.exports = router;

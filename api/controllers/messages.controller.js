@@ -56,7 +56,7 @@ const uploadFile = async (req, res, next) => {
     //   folder: "chat-files", // optional folder in your Cloudinary
     //   resource_type: "auto", // auto detects if image/video/file
     // });
-    
+
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
 
     let resourceType = "auto";
@@ -84,7 +84,31 @@ const uploadFile = async (req, res, next) => {
   }
 }
 
+const deleteMessages = async (req, res, next) => {
+    try {
+      const { messageId } = req.body;
+  
+      if (!messageId) {
+        return next(errorHandler(400, "Message ID is required"));
+      }
+  
+    //   const message = await Message.findById(messageId);
+      const message = await Message.findByIdAndUpdate(messageId, { isDeleted: true });
+      if (!message) {
+        return next(errorHandler(404, "Message not found"));
+      }
+  
+      await message.deleteOne();
+  
+      return res.status(200).json({ success: true, message: "Message deleted" });
+  
+    } catch (error) {
+      next(error);
+    }
+  }
+
 module.exports = {
     uploadFile,
-    getMessages
+    getMessages,
+    deleteMessages,
 }

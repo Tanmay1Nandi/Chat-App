@@ -5,6 +5,9 @@ import { MdFolderZip} from "react-icons/md"
 import moment from "moment"
 import { IoMdArrowDown } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
+import Swal from 'sweetalert2'; // New: we use sweetalert2 for better UI
+import withReactContent from 'sweetalert2-react-content';
+import { deleteMessage } from '../../../../../../app/chat/chatSlice';
 
 export default function MessageContainer() {
   const scrollRef = useRef();
@@ -132,19 +135,64 @@ export default function MessageContainer() {
     return "file";
   };
   
-  const handleDeleteAlert = () => {
-    alert("Delete")
-  }
+
+  const MySwal = withReactContent(Swal);
+
+  // Delete handler
+  const handleDeleteAlert = (messageId) => {
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to delete this message?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // 1. Call backend to delete
+          const res = await fetch('/api/messages/delete-message', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messageId }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Failed to delete');
+
+          // 2. Dispatch action to remove from Redux
+          dispatch(deleteMessage(messageId));
+
+          MySwal.fire('Deleted!', 'Your message has been deleted.', 'success');
+
+        } catch (error) {
+          console.error(error.message);
+          MySwal.fire('Error', error.message, 'error');
+        }
+      }
+    });
+  };
+
   
   const renderDmMessages = (message) =>
   <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
-    
     {
+      message.isDeleted ? (
+        <div className="italic text-white/80 bg-gray-700 border inline-block p-1 rounded my-1 max-w-[60%]">
+          Message deleted
+        </div>
+      ) : message.messageType === "text" && (
+        <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
+          {message.content}
+        </div>
+      )
+    }
+    {/* {
       message.messageType === "text" && <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
       {message.content}
     </div>
-    }
-    {
+    } */
     //   message.messageType === "file" && 
     //   <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#ff11ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ff11ff]/30" } border inline-block p-3 rounded my-1 max-w-[60%] break-words`}>
     //     {checkIfImage(message.fileUrl) ? 
@@ -165,6 +213,10 @@ export default function MessageContainer() {
     // </div>
 
 
+    message.isDeleted ? (
+      <div className="italic text-white/80 bg-gray-700 border inline-block rounded max-w-[60%]">
+      </div>
+    ) :
       message.messageType === "file" && 
       <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#ff11ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ff11ff]/30" } border inline-block p-0 rounded my-1 max-w-[60%] break-words`}>
         {getFileType(message.fileUrl) === "image" ? (
@@ -226,7 +278,10 @@ export default function MessageContainer() {
     }
     <div className="text-xs text-gray-600">
       {moment(message.createdAt).format("LT")}
-      <button className='ml-2 cursor-pointer' onClick={handleDeleteAlert}><FaTrashCan className='hover:text-red-500 ' /></button>
+      {
+        !message.isDeleted && 
+        <button className='ml-2 cursor-pointer' onClick={() => handleDeleteAlert(message._id)}><FaTrashCan className='hover:text-red-500 ' /></button>
+      }
     </div>
     
   </div>

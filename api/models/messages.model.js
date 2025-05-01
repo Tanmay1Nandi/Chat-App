@@ -27,6 +27,10 @@ const messageSchema = new mongoose.Schema({
             return this.messageType === "file"
         }
     },
+    isDeleted:{
+        type: Boolean,
+        default: false,
+    }
 },{timestamps: true})
 
 const Message = mongoose.model("message" , messageSchema);

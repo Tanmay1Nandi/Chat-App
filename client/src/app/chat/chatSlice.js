@@ -67,12 +67,18 @@ const chatSlice = createSlice({
               });
             });
           },
+          deleteMessage: (state, action) => {
+            const messageId = action.payload;
+            state.selectedChatMessages = state.selectedChatMessages.map(msg =>
+              msg._id === messageId ? { ...msg, isDeleted: true } : msg
+            );
+          },
           setDirectMessagesContacts: (state, action) => {
             state.directMessagesContacts = action.payload;
           }       
     }
 })
 
-export const {setSelectedChatType, setSelectedChatData, chatClose, chatOpen, addMessage, refreshMessage, setDirectMessagesContacts } = chatSlice.actions;
+export const {setSelectedChatType,deleteMessage, setSelectedChatData, chatClose, chatOpen, addMessage, refreshMessage, setDirectMessagesContacts } = chatSlice.actions;
 
 export default chatSlice.reducer;
