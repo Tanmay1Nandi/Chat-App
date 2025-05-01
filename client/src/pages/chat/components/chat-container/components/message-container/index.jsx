@@ -2,23 +2,28 @@ import React, { useDebugValue, useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { addMessage, refreshMessage } from '../../../../../../app/chat/chatSlice';
 import { MdFolderZip} from "react-icons/md"
-import { removeSingleMessage } from '../../../../../../app/singleMessage/singleMessageSlice';
 import moment from "moment"
 import { IoMdArrowDown } from 'react-icons/io';
+import { FaTrashCan } from 'react-icons/fa6';
 
 export default function MessageContainer() {
   const scrollRef = useRef();
   const {selectedChatType, selectedChatData, selectedChatMessages} = useSelector(state => state.chat);
-  const {oneMessage} = useSelector(state => state.singleMessage)
   const dispatch = useDispatch();
 
 
-  // const {currentUser} = useSelector(state => state.user);
 
-  const checkIfImage = (filePath) => {
-    const imageRegex = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i;
-    return imageRegex.test(filePath);
-  }
+  // const checkIfImage = (filePath) => {
+  //   const imageRegex = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i;
+  //   return imageRegex.test(filePath);
+  // }
+
+  // const checkIfImage = (fileType, fileUrl) => {
+  //   if (fileType === "image") return true;
+  //   const imageRegex = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i;
+  //   return imageRegex.test(fileUrl);
+  // }
+  
 
   useEffect(() => {
     if (!selectedChatData?._id || selectedChatType !== "contact"){
@@ -34,7 +39,6 @@ export default function MessageContainer() {
         });
         
         if(response.ok){
-          // setOneMessage(null);
           const data = await response.json();
           if(data.messages){
             data.messages.forEach((msg) => {
@@ -52,38 +56,179 @@ export default function MessageContainer() {
   }, [selectedChatData, selectedChatType, dispatch])
 
 
-  const downloadFile = (file) => {
+  const downloadFile = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to download file");
+      }
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+  
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      // extract filename from url
+      const filename = url.split("/").pop();
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+  
+      // release blob URL memory
+      window.URL.revokeObjectURL(blobUrl);
 
+        // const link = document.createElement('a');
+        // link.href = url;
+        // link.download = url.split('/').pop(); // force download
+        // document.body.appendChild(link);
+        // link.click();
+        // document.body.removeChild(link);
+      
+    } catch (error) {
+      console.log(error.message);
+    }
   };
+
+
+  // const downloadFile = async (fileUrl) => {
+  //   try {
+  //     // extract public_id and file_type
+  //     const urlParts = fileUrl.split('/');
+  //     const fileName = urlParts.pop(); // jzx4c5kvpcppnak6pfgx.pdf
+  //     const publicId = `chat-files/${fileName.split('.')[0]}`; // chat-files/jzx4c5kvpcppnak6pfgx
+  //     const fileType = fileName.split('.').pop(); // pdf
+  
+  //     // get signed URL from backend
+  //     const res = await fetch('/api/files/get-signed-url', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ publicId, fileType }),
+  //     });
+  
+  //     const data = await res.json();
+  //     if (!res.ok) throw new Error(data.error || 'Failed to get signed URL');
+  
+  //     // now download using signed URL
+  //     const a = document.createElement("a");
+  //     a.href = data.url;
+  //     a.download = fileName;
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     a.remove();
+  
+  //   } catch (error) {
+  //     console.error(error.message);
+  //   }
+  // };
+  
+  const getFileType = (fileUrl) => {
+    const extension = fileUrl.split('.').pop().toLowerCase();
+    if (["jpg", "jpeg", "png", "gif", "webp", "bmp", "svg", "tiff"].includes(extension)) return "image";
+    if (["pdf"].includes(extension)) return "pdf";
+    if (["doc", "docx"].includes(extension)) return "doc";
+    if (["zip", "rar", "7z"].includes(extension)) return "zip";
+    if (["mp4", "mov", "avi"].includes(extension)) return "video";
+    if (["mp3", "wav"].includes(extension)) return "audio";
+    return "file";
+  };
+  
+  const handleDeleteAlert = () => {
+    alert("Delete")
+  }
+  
   const renderDmMessages = (message) =>
   <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
+    
     {
       message.messageType === "text" && <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
       {message.content}
     </div>
     }
     {
+    //   message.messageType === "file" && 
+    //   <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#ff11ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ff11ff]/30" } border inline-block p-3 rounded my-1 max-w-[60%] break-words`}>
+    //     {checkIfImage(message.fileUrl) ? 
+    //     <div className='cursor-pointer'>
+    //       {/* <img src={`http://localhost:8000/${message.fileUrl}`} height={300} width={300}/> */}
+    //       <img src={message.fileUrl} height={300} width={300}/>
+    //     </div> :
+    //     <div className="flex items-center justify-center gap-4">
+    //       <span className='text-white/60 text-3xl bg-black/20 rounded-full p-3'>
+    //         <MdFolderZip />
+    //       </span>
+    //       <span>{message.fileUrl.split("/").pop()}</span>
+    //       <span className='bg-black/20 p-3 text-2xl text-white/60 rounded-full hover:bg-black/70 hover:text-white cursor-pointer transition-all duration-300' onClick={() => downloadFile(message.fileUrl)}>
+    //         <IoMdArrowDown />
+    //       </span>
+    //     </div>
+    //     }
+    // </div>
+
+
       message.messageType === "file" && 
-      <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20" } border inline-block p-4 rounded my-1 max-w-[60%] break-words`}>
-        {checkIfImage(message.fileUrl) ? 
-        <div className='cursor-pointer'>
-          <img src={`http://localhost:8000/${message.fileUrl}`} height={300} width={300}/>
-        </div> :
-        <div className="flex items-center justify-center gap-4">
-          <span className='text-white/60 text-3xl bg-black/20 rounded-full p-3'>
-            <MdFolderZip />
-          </span>
-          <span>{message.fileUrl.split("/").pop()}</span>
-          <span className='bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300' onClick={() => downloadFile(message.fileUrl)}>
+      <div className={`${message.sender !== selectedChatData?._id ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#ff11ff]/50" : "bg-[#2a2b33]/5 text-white/80 border-[#ff11ff]/30" } border inline-block p-0 rounded my-1 max-w-[60%] break-words`}>
+        {getFileType(message.fileUrl) === "image" ? (
+          <div className='relative group cursor-pointer inline-block'>
+          {/* Image */}
+          <img src={message.fileUrl} height={300} width={300} className="rounded" />
+        
+          {/* Download button */}
+          <div 
+            className='hidden group-hover:flex justify-center items-center absolute inset-0 m-auto bg-white/30 p-3 text-2xl text-black/80 rounded-full hover:bg-white/90 hover:text-black cursor-pointer transition-all duration-300 w-12 h-12'
+            onClick={() => downloadFile(message.fileUrl)}
+          >
             <IoMdArrowDown />
-          </span>
+          </div>
         </div>
-        }
-    </div>
+        
+        ) : getFileType(message.fileUrl) === "pdf" ? (
+          <div 
+            className='p-3 relative cursor-pointer flex items-center gap-2'
+            onClick={() => downloadFile(message.fileUrl)}
+          >
+            <span className='text-white/60 text-3xl bg-black/20 rounded-full p-3'>
+              📄
+            </span>
+            <span className="truncate max-w-[150px]">{message.fileUrl.split("/").pop()}</span>
+            <span className='bg-black/20 p-3 text-2xl text-white/60 rounded-full hover:bg-black/70 hover:text-white cursor-pointer transition-all duration-300' onClick={() => downloadFile(message.fileUrl)}>
+                <IoMdArrowDown />
+              </span>
+          </div>
+        ) : getFileType(message.fileUrl) === "video" ? (
+          <video 
+            src={message.fileUrl} 
+            controls 
+            width="100%" 
+            className="rounded"
+          />
+        ) : getFileType(message.fileUrl) === "audio" ? (
+          <audio 
+            src={message.fileUrl} 
+            controls 
+            className="w-full"
+          />
+        ) : (
+          <div className="p-3 flex items-center justify-center gap-4">
+            <span className='text-white/60 text-3xl bg-black/20 rounded-full p-3'>
+              <MdFolderZip />
+            </span>
+            <span className="truncate max-w-[150px]">{message.fileUrl.split("/").pop()}</span>
+            <span 
+              className='bg-black/20 p-3 text-2xl text-white/60 rounded-full hover:bg-black/70 hover:text-white cursor-pointer transition-all duration-300' 
+              onClick={() => downloadFile(message.fileUrl)}
+            >
+              <IoMdArrowDown />
+            </span>
+          </div>
+        )}
+      </div>
+    
     }
     <div className="text-xs text-gray-600">
       {moment(message.createdAt).format("LT")}
+      <button className='ml-2 cursor-pointer' onClick={handleDeleteAlert}><FaTrashCan className='hover:text-red-500 ' /></button>
     </div>
+    
   </div>
 
   const renderMessages = () => {
@@ -119,12 +264,6 @@ export default function MessageContainer() {
   return (
     <div className='flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full'>
       {renderMessages()}
-      {/* {
-        oneMessage && <div className="text-right">
-        <div className="bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50  border inline-block p-4 rounded my-1 max-w-[60%] break-words ">{oneMessage}</div>
-      </div>
-      } */}
-      
       <div ref={scrollRef} className=""></div>
     </div>
   )

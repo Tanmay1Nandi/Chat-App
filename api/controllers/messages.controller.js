@@ -24,23 +24,64 @@ const getMessages = async(req, res, next) => {
     }
 }
 
-const uploadFile = async(req, res, next) => {
-    try {
-        if(!req.file){
-            return next(errorHandler(400, "File is required"));
-        }
-        const date = Date.now();
-        let fileDir = `uploads/files/${date}`;
-        let fileName = `${fileDir}/${req.file.originalname}`;
+// const uploadFile = async(req, res, next) => {
+//     try {
+//         if(!req.file){
+//             return next(errorHandler(400, "File is required"));
+//         }
+//         const date = Date.now();
+//         let fileDir = `uploads/files/${date}`;
+//         let fileName = `${fileDir}/${req.file.originalname}`;
 
-        mkdirSync(fileDir, {recursive: true});
+//         mkdirSync(fileDir, {recursive: true});
 
-        renameSync(req.file.path, fileName)
+//         renameSync(req.file.path, fileName)
 
-        return res.status(200).json({ filePath: fileName});
-    } catch (error) {
-        next(error);
+//         return res.status(200).json({ filePath: fileName});
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+const cloudinary = require("../utils/cloudinary");
+
+const uploadFile = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return next(errorHandler(400, "File is required"));
     }
+
+    // Upload to cloudinary
+    // const result = await cloudinary.uploader.upload(req.file.path, {
+    //   folder: "chat-files", // optional folder in your Cloudinary
+    //   resource_type: "auto", // auto detects if image/video/file
+    // });
+    
+    const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
+
+    let resourceType = "auto";
+    if (["pdf", "zip", "rar", "7z", "doc", "docx", "txt"].includes(fileExtension)) {
+      resourceType = "raw";
+    }
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "chat-files",
+      resource_type: resourceType,
+    });
+
+    // Send back Cloudinary URL
+    // return res.status(200).json({ filePath: result.secure_url });
+
+    return res.status(200).json({ 
+        filePath: result.secure_url, 
+        fileType: result.resource_type, // image, raw, video
+        publicId: result.public_id // helpful if you want delete later
+      });
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {

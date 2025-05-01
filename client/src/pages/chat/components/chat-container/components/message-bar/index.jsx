@@ -71,6 +71,11 @@ export default function MessageBar() {
     try {
       const file = e.target.files[0];
       if(file) {
+        const fileSizeMB = file.size / (1024 * 1024);
+          if (fileSizeMB > 12) {
+          alert(`File too big! Max allowed is 12MB.`);
+          return
+        }
         const formData = new FormData();
         formData.append("file",file);
         const response = await fetch("/api/messages/upload-file", {

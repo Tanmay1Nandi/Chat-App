@@ -26,7 +26,8 @@ connectToDb(process.env.MONGO)
 const userRouter = require("./routes/auth.route");
 const userChangesRouter = require("./routes/user.route")
 const contactsRouter = require("./routes/contact.route");
-const messageRouter = require("./routes/message.route")
+const messageRouter = require("./routes/message.route");
+const filesRouter = require("./routes/files.route");
 const { setUpSocket } = require("./socket");
 
 app.use("/uploads/files", express.static("uploads/files"));
@@ -36,6 +37,7 @@ app.use("/api/auth", userRouter);
 app.use("/api/user", userChangesRouter);
 app.use("/api/contacts", contactsRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/files", filesRouter);
 
 const server = app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}!`);
