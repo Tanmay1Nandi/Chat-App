@@ -3,16 +3,11 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
-app.use(express.static(path.join(__dirname,"..",'/client/dist')));
-
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname,"..", "client", "dist", "index.html"));
-})
-
 const dotenv = require("dotenv");
 dotenv.config();
 
 const PORT = process.env.PORT || 8001;
+const NODE_ENV = process.env.NODE_ENV || "development"
 
 //middlewares
 app.use(express.json());
@@ -37,6 +32,8 @@ const filesRouter = require("./routes/files.route");
 const channelRouter = require("./routes/channel.route")
 const { setUpSocket } = require("./socket");
 
+
+
 app.use("/uploads/files", express.static("uploads/files"));
 
 
@@ -47,6 +44,15 @@ app.use("/api/messages", messageRouter);
 app.use("/api/files", filesRouter);
 app.use("/api/channels", channelRouter);
 
+if (NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+  
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
+    });
+  }
+
+  
 const server = app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}!`);
 })
