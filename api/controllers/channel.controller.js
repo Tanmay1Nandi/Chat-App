@@ -1,4 +1,5 @@
 
+const { default: mongoose } = require("mongoose");
 const Channel = require("../models/channel.model");
 const errorHandler = require("../utils/error");
 
@@ -19,6 +20,16 @@ const createChannel = async (req, res, next) => {
     });
 
     res.status(201).json({ channel: newChannel });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getUserChannels = async (req, res, next) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.id);
+    const channels = await Channel.find({members : userId}).sort({updatedAt : -1});
+    res.status(201).json({channels});
   } catch (err) {
     next(err);
   }
@@ -46,7 +57,10 @@ const searchContacts = async (req, res, next) => {
     }
   };
 
+
+
 module.exports = {
   createChannel,
+  getUserChannels,
   searchContacts
 };

@@ -54,7 +54,7 @@ const handleLogin = async(req, res, next) => {
 
         res.status(200).cookie("access_token", token ,{
             httpOnly: true,
-            maxAge: 24*60*60*1000*7
+            maxAge: 24*60*60*1000*365
         }).json(rest);
 
     } catch (error) {
@@ -93,7 +93,7 @@ const handleGoogleLogin =async (req, res, next)=>{
             const {password, ...rest} = newUser._doc;
             res.status(200).cookie("access_token", token, {
                 httpOnly: true,
-                maxAge: 24 * 60 * 60 * 1000* 7
+                maxAge: 24 * 60 * 60 * 1000* 365
             }).json(rest);
         }
     } catch (error) {

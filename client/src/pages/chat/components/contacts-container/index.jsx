@@ -3,14 +3,16 @@ import {FcPositiveDynamic} from "react-icons/fc"
 import ProfileInfo from './components/profile-info'
 import NewDm from './components/new-dm'
 import { useDispatch, useSelector } from 'react-redux'
-import { setDirectMessagesContacts } from '../../../../app/chat/chatSlice'
+import { setDirectMessagesContacts, setChannels } from '../../../../app/chat/chatSlice'
 import ContactList from '../../../../myComponents/ContactList'
+import ChannelList from '../../../../myComponents/ChannelList'
 import CreateChannel from './components/create-channel'
 
 export default function ContactsContainer() {
 
   const dispatch = useDispatch();
   const {directMessagesContacts} = useSelector(state => state.chat)
+  const {channels} = useSelector(state => state.chat)
   useEffect(() => {
     const getContacts = async() => {
       const response = await fetch("/api/contacts/get-contacts-for-dm");
@@ -19,7 +21,15 @@ export default function ContactsContainer() {
         dispatch(setDirectMessagesContacts(data.contacts));
       }
     }
+    const getChannels = async() => {
+      const response = await fetch("/api/channels/get-channels");
+      if(response.ok){
+        const data = await response.json();
+        dispatch(setChannels(data.channels));
+      }
+    } 
     getContacts();
+    getChannels();
   }, [])
 
   return (
@@ -43,6 +53,8 @@ export default function ContactsContainer() {
           <Title text="Channels" />
           <CreateChannel />
         </div>
+        <div className="max-h-[40vh] pl-0 ml-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        {channels && <ChannelList channels={channels} />}</div>
       </div>
       <ProfileInfo />
     </div>

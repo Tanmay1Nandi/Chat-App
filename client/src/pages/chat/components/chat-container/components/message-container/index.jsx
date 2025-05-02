@@ -302,8 +302,12 @@ export default function MessageContainer() {
             </div>
           }
           {
-            selectedChatType === "contact" &&  renderDmMessages(message)
+            selectedChatType === "contact" &&  renderDmMessages(message) 
           }
+          {/* {
+            selectedChatType === "channel" &&
+            renderDmMessages(message)
+          } */}
         </div>
       )
     })
