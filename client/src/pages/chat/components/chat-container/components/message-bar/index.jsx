@@ -124,8 +124,8 @@ export default function MessageBar() {
           _id: tempId,
           sender: currentUser._id,
           recipient: selectedChatData._id,
-          content: null,
-          messageType: "file",
+          content: "Sending...",
+          messageType: "text",
           fileUrl: previewUrl, // local preview
           createdAt: new Date().toISOString(),
           isPending: true

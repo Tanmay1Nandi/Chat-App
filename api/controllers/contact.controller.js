@@ -89,7 +89,42 @@ const getContactsForDmList = async(req, res, next) => {
     }
 }
 
+// const getAllContacts = async(req, res, next) => {
+//     try {
+//         const users = await User.find({_id:{$ne : req.user.id}}, "firstName lastName _id email");
+
+//         const contacts = users.map((user) => [{
+//             label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+//         }])
+
+//         return res.status(200).json({contacts});
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+const getAllContacts = async (req, res, next) => {
+    try {
+      const users = await User.find(
+        { _id: { $ne: req.user.id } },
+        "firstName lastName _id email profilePicture" // fetch profilePicture too
+      );
+  
+      const contacts = users.map((user) => ({
+        value: user._id,
+        label: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email,
+        email: user.email,
+        profilePicture: user.profilePicture || null, // optional
+      }));
+  
+      return res.status(200).json({ contacts });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 module.exports = {
     searchContacts,
-    getContactsForDmList
+    getContactsForDmList,
+    getAllContacts
 }

@@ -5,6 +5,7 @@ import NewDm from './components/new-dm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setDirectMessagesContacts } from '../../../../app/chat/chatSlice'
 import ContactList from '../../../../myComponents/ContactList'
+import CreateChannel from './components/create-channel'
 
 export default function ContactsContainer() {
 
@@ -40,6 +41,7 @@ export default function ContactsContainer() {
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
           <Title text="Channels" />
+          <CreateChannel />
         </div>
       </div>
       <ProfileInfo />
