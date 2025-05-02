@@ -20,6 +20,16 @@ const handleUpdate = async(req, res, next) => {
     }
 }
 
+const verifyCurrentUser = (req, res, next) => {
+    if(req.user.id !== null){
+        return res.status(200).json("User Exists");
+    }
+    else{
+        return res.status(404).json("Unauthorized");
+    }
+}
+
 module.exports = {
     handleUpdate,
+    verifyCurrentUser
 }

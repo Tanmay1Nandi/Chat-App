@@ -61,9 +61,9 @@ const setUpSocket = (server) => {
 
         if(userId){
             userSocketMap.set(userId, socket.id);
-            console.log(`User Connected: ${userId} with socket ID: ${socket.id}`)
+            // console.log(`User Connected: ${userId} with socket ID: ${socket.id}`)
         }else{
-            console.log("User ID not provided during connection");
+            // console.log("User ID not provided during connection");
         }
 
         socket.on("sendMessage", sendMessage);
