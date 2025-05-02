@@ -1,6 +1,6 @@
 import React, { useDebugValue, useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { addMessage, refreshMessage } from '../../../../../../app/chat/chatSlice';
+import { addMessage, refreshMessage, removeMessage } from '../../../../../../app/chat/chatSlice';
 import { MdFolderZip} from "react-icons/md"
 import moment from "moment"
 import { IoMdArrowDown } from 'react-icons/io';
@@ -159,7 +159,7 @@ export default function MessageContainer() {
           });
 
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || 'Failed to delete');
+          if (!res.ok) throw new Error(data.error || 'Failed to delete or deleted by other User.');
 
           // 2. Dispatch action to remove from Redux
           dispatch(deleteMessage(messageId));
@@ -222,7 +222,7 @@ export default function MessageContainer() {
         {getFileType(message.fileUrl) === "image" ? (
           <div className='relative group cursor-pointer inline-block'>
           {/* Image */}
-          <img src={message.fileUrl} height={300} width={300} className="rounded" />
+          <img src={message.fileUrl} height={300} width={300} className="rounded pb-0 p-1 sm:pb-1 sm:p-2" />
         
           {/* Download button */}
           <div 
@@ -309,11 +309,26 @@ export default function MessageContainer() {
     })
   }
 
+  // useEffect(() => {
+  //   if(scrollRef.current){
+  //     scrollRef.current.scrollIntoView({behavior: "smooth"});
+  //   }
+  // }, [selectedChatMessages])
+  const prevChatId = useRef(null);
+
   useEffect(() => {
-    if(scrollRef.current){
-      scrollRef.current.scrollIntoView({behavior: "smooth"});
-    }
-  }, [selectedChatMessages])
+    if (!scrollRef.current) return;
+
+    const isNewChatOpened = selectedChatData?._id !== prevChatId.current;
+    prevChatId.current = selectedChatData?._id;
+
+    setTimeout(() => {
+      scrollRef.current.scrollIntoView({ 
+        behavior: isNewChatOpened ? "auto" : "smooth",
+        block: "end"
+      });
+    }, 100);
+  }, [selectedChatMessages, selectedChatData?._id]);
 
 
   return (

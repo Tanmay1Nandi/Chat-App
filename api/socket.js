@@ -26,16 +26,33 @@ const setUpSocket = (server) => {
         const senderSocketId = userSocketMap.get(message.sender);
         const recipientSocketId = userSocketMap.get(message.recipient);
 
-        const createdMessage = await Message.create(message);
-
-        const messageData = await Message.findById(createdMessage._id).populate("sender", "id email firstName lastName image").populate("recipient","id email firstName lastName image")
-
-        if(recipientSocketId){
-            io.to(recipientSocketId).emit("receivedMessage", messageData);
-        }
-
-        if(senderSocketId){
-            io.to(senderSocketId).emit("receivedMessage", messageData);
+        // const createdMessage = await Message.create(message);
+        try {
+            const createdMessage = await Message.create({
+                sender: message.sender,
+                recipient: message.recipient,
+                content: message.content,
+                messageType: message.messageType,
+                fileUrl: message.fileUrl,
+            });
+    
+            const messageData = await Message.findById(createdMessage._id).populate("sender", "id email firstName lastName image").populate("recipient","id email firstName lastName image")
+    
+            const messageToSend = {
+                ...messageData.toObject(),
+                tempId: message.tempId,  
+            };
+    
+            if(recipientSocketId){
+                io.to(recipientSocketId).emit("receivedMessage", messageToSend);
+            }
+    
+            if(senderSocketId){
+                io.to(senderSocketId).emit("receivedMessage", messageToSend);
+            }
+            
+        } catch (error) {
+            console.log(error)
         }
     }
 

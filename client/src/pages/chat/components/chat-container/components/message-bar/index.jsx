@@ -5,7 +5,9 @@ import { IoMdSend } from "react-icons/io"
 import EmojiPicker from "emoji-picker-react"
 import { useSelector, useDispatch } from 'react-redux'
 import { useSocket } from '../../../../../../context/SocketContext'
-import { addSingleMessage, removeSingleMessage } from '../../../../../../app/singleMessage/singleMessageSlice'
+import { addMessage } from '../../../../../../app/chat/chatSlice'
+import { v4 as uuidv4 } from 'uuid';
+import { replaceMessage, removeMessage } from '../../../../../../app/chat/chatSlice'
 
 export default function MessageBar() {
   const [message, setMessage] = useState("");
@@ -22,6 +24,26 @@ export default function MessageBar() {
 
   const fileInputRef = useRef();
 
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleReceivedMessage = (message) => {
+      console.log(message)
+      if (message.tempId) {
+        dispatch(removeMessage(message.tempId));
+      } else {
+        // For messages that don't have temp (e.g. recipient side)
+        dispatch(addMessage(message));
+      }
+    };
+
+    socket.on("receivedMessage", handleReceivedMessage);
+  
+    return () => {
+      socket.off("receivedMessage", handleReceivedMessage);
+    };
+  }, [socket]);
+  
   useEffect(() => {
     function handleClickOutside(event){
       if(emojiRef.current && !emojiRef.current.contains(event.target)){
@@ -45,6 +67,21 @@ export default function MessageBar() {
         console.log("Socket not ready!");
         return;
       }
+
+      const tempId = uuidv4();
+
+      const tempMessage = {
+        _id: tempId,
+        sender: currentUser._id,
+        recipient: selectedChatData._id,
+        content: message,
+        messageType: "text",
+        fileUrl: null,
+        createdAt: new Date().toISOString(),
+        isPending: true
+      }
+      dispatch(addMessage(tempMessage));
+
       if(selectedChatType === "contact"){
         socket.emit("sendMessage", {
           sender: currentUser._id,
@@ -52,6 +89,7 @@ export default function MessageBar() {
           recipient: selectedChatData._id,
           messageType: "text",
           fileUrl: null,
+          tempId,
         })
       }
       setMessage("");
@@ -76,6 +114,25 @@ export default function MessageBar() {
           alert(`File too big! Max allowed is 12MB.`);
           return
         }
+
+        const tempId = uuidv4();
+        const previewUrl = URL.createObjectURL(file);
+
+
+        // Optimistic message (preview before upload)
+        const tempMessage = {
+          _id: tempId,
+          sender: currentUser._id,
+          recipient: selectedChatData._id,
+          content: null,
+          messageType: "file",
+          fileUrl: previewUrl, // local preview
+          createdAt: new Date().toISOString(),
+          isPending: true
+        }
+        dispatch(addMessage(tempMessage));
+
+
         const formData = new FormData();
         formData.append("file",file);
         const response = await fetch("/api/messages/upload-file", {
@@ -85,6 +142,7 @@ export default function MessageBar() {
 
         if(response.ok){
           const data = await response.json();
+          dispatch(removeMessage(tempId));
           if(data){
             if(selectedChatType === "contact"){
               socket.emit("sendMessage", {
@@ -93,6 +151,7 @@ export default function MessageBar() {
                 recipient: selectedChatData._id,
                 messageType: "file",
                 fileUrl: data.filePath,
+                tempId,
               })
             }
           }

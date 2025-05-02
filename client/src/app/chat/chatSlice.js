@@ -54,17 +54,20 @@ const chatSlice = createSlice({
             const messages = Array.isArray(payload) ? payload : [payload];
           
             messages.forEach((message) => {
-              state.selectedChatMessages.push({
-                ...message,
-                recipient:
-                  state.selectedChatType === "channel"
-                    ? message.recipient
-                    : message.recipient,
-                sender:
-                  state.selectedChatType === "channel"
-                    ? message.sender
-                    : message.sender,
-              });
+              const exists = state.selectedChatMessages.some((msg) => msg._id === message._id);
+              if(!exists){
+                state.selectedChatMessages.push({
+                  ...message,
+                  recipient:
+                    state.selectedChatType === "channel"
+                      ? message.recipient
+                      : message.recipient,
+                  sender:
+                    state.selectedChatType === "channel"
+                      ? message.sender
+                      : message.sender,
+                });
+              }
             });
           },
           deleteMessage: (state, action) => {
@@ -73,12 +76,21 @@ const chatSlice = createSlice({
               msg._id === messageId ? { ...msg, isDeleted: true } : msg
             );
           },
+          replaceMessage: (state, action) => {
+            const { tempId, newMessage } = action.payload;
+            state.selectedChatMessages = state.selectedChatMessages.map(msg =>
+              msg._id === tempId ? newMessage : msg
+            );
+          },
           setDirectMessagesContacts: (state, action) => {
             state.directMessagesContacts = action.payload;
-          }       
+          },
+          removeMessage: (state, action) => {
+            state.selectedChatMessages = state.selectedChatMessages.filter(msg => msg._id !== action.payload);
+          },       
     }
 })
 
-export const {setSelectedChatType,deleteMessage, setSelectedChatData, chatClose, chatOpen, addMessage, refreshMessage, setDirectMessagesContacts } = chatSlice.actions;
+export const {setSelectedChatType, replaceMessage, removeMessage, deleteMessage, setSelectedChatData, chatClose, chatOpen, addMessage, refreshMessage, setDirectMessagesContacts } = chatSlice.actions;
 
 export default chatSlice.reducer;
