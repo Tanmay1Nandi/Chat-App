@@ -29,7 +29,7 @@ const getUserChannels = async (req, res, next) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.id);
     const channels = await Channel.find({members : userId}).sort({updatedAt : -1});
-    res.status(201).json({channels});
+    res.status(200).json({channels});
   } catch (err) {
     next(err);
   }

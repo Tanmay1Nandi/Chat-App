@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const PORT = process.env.PORT || 8001;
-const NODE_ENV = process.env.NODE_ENV || "development"
+// const NODE_ENV = process.env.NODE_ENV || "development"
 
 //middlewares
 app.use(express.json());
@@ -44,13 +44,13 @@ app.use("/api/messages", messageRouter);
 app.use("/api/files", filesRouter);
 app.use("/api/channels", channelRouter);
 
-if (NODE_ENV === "production") {
+// if (NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "..", "client", "dist")));
   
-    app.get("/*", (req, res) => {
+    app.get(/^\/(?!api).*/, (req, res) => {
       res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
     });
-  }
+  // }
 
   
 const server = app.listen(PORT, ()=>{

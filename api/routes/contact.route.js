@@ -5,7 +5,7 @@ const { searchContacts, getContactsForDmList, getAllContacts } = require("../con
 const router = express.Router();
 
 router.post("/search", verifyUser, searchContacts);
-router.get("/get-contacts-for-dm", verifyUser, getContactsForDmList),
-router.get("/get-all-contacts", verifyUser, getAllContacts),
+router.get("/get-contacts-for-dm", verifyUser, getContactsForDmList);
+router.get("/get-all-contacts", verifyUser, getAllContacts);
 
 module.exports = router;
