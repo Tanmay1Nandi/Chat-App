@@ -10,14 +10,18 @@ export default function ChatHeader() {
     <div className='h-[10vh] border-b-2 border-[#2f303b] flex justify-between items-center px-20'>
       <div className="flex gap-5 items-center w-full justify-between">
         <div className="flex gap-3 items-center justify-center">
-        <div className="flex gap-2 items-center justify-center">
+        <div className="flex gap-2 items-center justify-center max-w-[50vw] sm:max-w-full">
           <div className="">
             <div className="h-12 w-12 relative border-1 border-purple-500 dark:border-gray-500 rounded-full flex items-center justify-center">
               <img className='w-full h-full border-0.5 dark:border-gray-500 border-purple-500 rounded-full object-cover' src={selectedChatData.image}/>
             </div>
           </div>
-          {selectedChatType === "contact" && selectedChatData.firstName ? `${selectedChatData.firstName}  ${selectedChatData.lastName}` : selectedChatData.email 
-          }
+          <div className="truncate">
+            {
+              selectedChatType === "contact" && selectedChatData.firstName ? `${selectedChatData.firstName}  ${selectedChatData.lastName}` : selectedChatData.email 
+            }
+          </div>
+          
         </div>
         </div>
         <div className="flex items-center gap-5 justify-center">

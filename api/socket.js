@@ -4,7 +4,7 @@ const Message = require("./models/messages.model");
 const setUpSocket = (server) => {
     const io = new Server(server, {
         cors:{
-            origin: "http://localhost:5173",
+            origin: ["http://localhost:5173", "https://notsapp-sapm.onrender.com/"],
             methods: ["GET", "POST"],
             credentials: true,
         }
