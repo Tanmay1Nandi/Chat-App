@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { addMessage } from "../app/chat/chatSlice";
 
 const SocketContext = createContext(null);
-const socketURL = process.env.REACT_APP_SOCKET_URL || "http://localhost:8000";
+const socketURL = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:8000";
 export const useSocket = () => {
     return useContext(SocketContext);
 }
