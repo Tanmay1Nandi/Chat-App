@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { addMessage } from "../app/chat/chatSlice";
 
 const SocketContext = createContext(null);
-
+const socketURL = process.env.REACT_APP_SOCKET_URL || "http://localhost:8000";
 export const useSocket = () => {
     return useContext(SocketContext);
 }
@@ -20,7 +20,7 @@ export const SocketProvider = ({children}) => {
     
     useEffect(() => {
         if(currentUser) {
-            socket.current = io("http://localhost:8000",{
+            socket.current = io(socketURL,{
                 withCredentials: true,
                 query:{ userId: currentUser._id}
             })
