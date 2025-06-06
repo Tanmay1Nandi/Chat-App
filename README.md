@@ -123,5 +123,4 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 
 * [ ] Implement end-to-end encryption
 * [ ] Add group chat feature
-* [ ] Create mobile-responsive UI
 * [ ] Integrate push notifications
