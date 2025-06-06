@@ -70,15 +70,15 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 
 ### Profile Page
 
-![Profile Page](./screenshots/profile.png.png)
+![Profile Page](./screenshots/profile.png)
 
 ### Personal Chat Interface
 
-![Chat Interface](./screenshots/personal-chat.png.png)
+![Chat Interface](./screenshots/personal-chat.png)
 
 ### Search New People to Chat
 
-![Search Contact](./screenshots/search-contacts.png.png)
+![Search Contact](./screenshots/search-contacts.png)
 
 ---
 
