@@ -22,7 +22,7 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 | Backend        | Node.js, Express, Socket.io |
 | Database       | MongoDB                     |
 | Authentication | JWT                         |
-| Deployment     | Heroku / Vercel / Netlify   |
+| Deployment     | Render                      |
 
 ---
 
@@ -70,15 +70,15 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 
 ### Profile Page
 
-![Profile Page](./assets/Screenshot%20\(73\).png)
+![Profile Page](./screenshots/profile.png.png)
 
 ### Personal Chat Interface
 
-![Chat Interface](./assets/Screenshot%20\(74\).png)
+![Chat Interface](./screenshots/personal-chat.png.png)
 
 ### Search New People to Chat
 
-![Search Contact](./assets/Screenshot%20\(75\).png)
+![Search Contact](./screenshots/search-contacts.png.png)
 
 ---
 
