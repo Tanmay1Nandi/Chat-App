@@ -2,6 +2,7 @@
 
 A real-time, one-on-one and group chat application built with React, Node.js, Express, and WebSockets. Enables users to register, authenticate, and exchange messages instantly.
 
+Click here to visit the website [NotsApp](https://notsapp-sapm.onrender.com)
 ---
 
 ## 🎯 Features
@@ -25,6 +26,17 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 | Deployment     | Render                      |
 
 ---
+
+## 📦 Folder Structure
+
+```
+/
+├── client/           # Frontend source code
+├── server/           # Backend source code
+├── .env              # Environment variables (not committed)
+├── package.json
+└── README.md
+```
 
 ## 📅 Getting Started (Local Setup)
 
@@ -82,42 +94,9 @@ A real-time, one-on-one and group chat application built with React, Node.js, Ex
 
 ---
 
-## 📦 Folder Structure
-
-```
-/
-├── client/           # Frontend source code
-├── server/           # Backend source code
-├── .env              # Environment variables (not committed)
-├── package.json
-└── README.md
-```
-
----
-
-## 🔧 Contributing
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/my-feature`
-3. Commit and push your changes:
-
-   ```bash
-   git commit -m "Add feature"
-   git push origin feature/my-feature
-   ```
-4. Open a Pull Request
-
----
 
 
----
 
-## 📞 Contact
-
-**Tanmay Nandi**
-[GitHub Profile](https://github.com/Tanmay1Nandi)
-
----
 
 ### ✅ To Do
 
